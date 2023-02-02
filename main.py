@@ -35,6 +35,33 @@ pygame.display.update()
 while pygame.event.wait().type != pygame.QUIT:
     pass
 """
+
+def rotation(piece):
+    match len(piece):
+
+        #Square
+        case 2:
+            pass
+        #L reverseL,S_Block,Z_block
+        case 3:
+            new_piece=[[0,0,0],
+                       [0,0,0],
+                       [0,0,0]]
+            new_piece[0][0]=piece[2][0]
+            new_piece[0][1]=piece[1][0]
+            new_piece[0][2]=piece[0][0]
+            new_piece[1][0]=piece[2][1]
+            new_piece[1][1]=piece[1][1]
+            new_piece[1][2]=piece[0][1]
+            new_piece[2][0]=piece[2][2]
+            new_piece[2][1]=piece[1][2]
+            new_piece[2][2]=piece[0][2]
+            print(new_piece)
+            return new_piece
+
+        #Line
+        case 4:
+            pass
 Line = [[[0, 0, 0, 0],
          [1, 1, 1, 1],
          [0, 0, 0, 0],
@@ -60,7 +87,7 @@ Reverse_L = [[1, 0, 0],
              [1, 1, 1],
              [0, 0, 0]]
 
-L = [[0, 0, 1], 
+L = [[0, 0, 1],
      [1, 1, 1],
      [0, 0, 0]]
 
@@ -92,6 +119,9 @@ for i in range(10, 571, 25):
     pygame.draw.rect(window, (0, 255, 255), ((87, 12), (22, 22)), 0)
 
 pygame.display.update()
-
+T_Block=rotation(T_Block)
+T_Block=rotation(T_Block)
+T_Block=rotation(T_Block)
+T_Block=rotation(T_Block)
 while pygame.event.wait().type != pygame.QUIT:
     pass
