@@ -13,7 +13,8 @@
 #   Tetris: 8 points
 
 import pygame
-#Test d'un code + tentative d'automatisation du calcul de la grille (ça n'a pas très bien marché)
+
+# Test d'un code + tentative d'automatisation du calcul de la grille (ça n'a pas très bien marché)
 """
 # Grille uniquement pour affichage (ne possède pas de collisions et n'en a pas vraiment besoin si l'on connait les dimension d'un carré)
 pygame.init()
@@ -34,15 +35,61 @@ pygame.display.update()
 while pygame.event.wait().type != pygame.QUIT:
     pass
 """
+Line = [[[0, 0, 0, 0],
+         [1, 1, 1, 1],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0]],
+
+        [[0, 0, 1, 0],  #[1,0] passe a [0,2]
+         [0, 0, 1, 0],  #[1,1] passe a [1,2]
+         [0, 0, 1, 0],  #[1,2] passe a [2,2]
+         [0, 0, 1, 0]], #[1,3] passe a [3,2]
+
+        [[0, 0, 0, 0],  # [0,2] passe a [2,0]
+        [0, 0, 0, 0],   # [1,2] passe a [2,1]
+        [1, 1, 1, 1],   # [2,2] passe a [2,2]
+        [0, 0, 0, 0]],  # [3,2] passe a [2,3]
+
+        [[0, 1, 0, 0],  # [2,0] passe a [0,1]
+        [0, 1, 0, 0],   # [2,1] passe a [1,1]
+        [0, 1, 0, 0],   # [2,2] passe a [2,1]
+        [0, 1, 0, 0]],  # [2,3] passe a [3,1]
+        ]
+
+Reverse_L = [[1, 0, 0],
+             [1, 1, 1],
+             [0, 0, 0]]
+
+L = [[0, 0, 1], 
+     [1, 1, 1],
+     [0, 0, 0]]
+
+Square = [[1, 1],
+          [1, 1]]
+
+S_Block = [[0, 1, 1],
+           [1, 1, 0],
+           [0, 0, 0]]
+
+T_Block = [[0, 1, 0],
+           [1, 1, 1],
+           [0, 0, 0]]
+
+Z_Block = [[1, 1, 0],
+           [0, 1, 1],
+           [0, 0, 0]]
 
 pygame.init()
 
-window = pygame.display.set_mode((270 ,570))
+window = pygame.display.set_mode((270, 570))
 
 for i in range(10, 571, 25):
     pygame.draw.line(window, (255, 255, 255), (10, i), (260, i))
     pygame.draw.line(window, (255, 255, 255), (i, 10), (i, 560))
-    pygame.draw.rect(window, (0, 255, 255), ((12, 12), (22, 22)), 1)
+    pygame.draw.rect(window, (0, 255, 255), ((12, 12), (22, 22)), 0)
+    pygame.draw.rect(window, (0, 255, 255), ((37, 12), (22, 22)), 0)
+    pygame.draw.rect(window, (0, 255, 255), ((62, 12), (22, 22)), 0)
+    pygame.draw.rect(window, (0, 255, 255), ((87, 12), (22, 22)), 0)
 
 pygame.display.update()
 
