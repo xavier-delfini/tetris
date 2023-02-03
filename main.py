@@ -11,6 +11,7 @@
 #   Double: 3 points
 #   Triple: 5 points
 #   Tetris: 8 points
+#TODO:Bonus ajouter la musique de tetris (pygame mixer)
 
 import pygame
 
@@ -36,8 +37,23 @@ while pygame.event.wait().type != pygame.QUIT:
     pass
 """
 
-def draw_pieces():
-
+#pygame.draw.rect(window, (0, 255, 255), ((87, 12), (22, 22)), 0)
+def draw_pieces(piece, position):
+    if position is None:
+        position = [0, 0]
+    j=position[1]
+    for x in piece:
+        i=position[0]
+        for y in x:
+            if y == 1:
+                calc_position([i,j])
+            i+=1
+        j+=1
+def calc_position(position):
+    calc_width=12+(25*position[0])
+    calc_height=12+(25*position[1])
+    pygame.draw.rect(window, (0, 255, 255), ((calc_width, calc_height), (22, 22)), 0)
+    pygame.display.update()
 def rotation(piece):
     match len(piece):
 
@@ -119,15 +135,16 @@ pygame.init()
 
 window = pygame.display.set_mode((270, 570))
 
-for i in range(10, 571, 25):
+for i in range(10, 561, 25):
     pygame.draw.line(window, (255, 255, 255), (10, i), (260, i))
     pygame.draw.line(window, (255, 255, 255), (i, 10), (i, 560))
-pygame.draw.rect(window, (0, 255, 255), ((12, 12), (22, 22)), 0)#Bloc de taille 22:22 avec 25 pixels de décalage pour allignement avec ligne
-pygame.draw.rect(window, (0, 255, 255), ((37, 12), (22, 22)), 0)
-pygame.draw.rect(window, (0, 255, 255), ((62, 12), (22, 22)), 0)
-pygame.draw.rect(window, (0, 255, 255), ((87, 12), (22, 22)), 0)
+#pygame.draw.rect(window, (0, 255, 255), ((12, 12), (22, 22)), 0)#Bloc de taille 22:22 avec 25 pixels de décalage pour allignement avec ligne
+#pygame.draw.rect(window, (0, 255, 255), ((37, 12), (22, 22)), 0)
+#pygame.draw.rect(window, (0, 255, 255), ((62, 12), (22, 22)), 0)
+#pygame.draw.rect(window, (0, 255, 255), ((87, 12), (22, 22)), 0)
 
 pygame.display.update()
+draw_pieces(Reverse_L,[3,4])
 Line=rotation(Line)
 Line=rotation(Line)
 Line=rotation(Line)
