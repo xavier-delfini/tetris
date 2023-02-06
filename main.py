@@ -1,16 +1,29 @@
+#Partie jeu:
+#TODO:(Prioritaire 1)Représenter les pièces dans l'array
+#TODO:(Prioritaire 2)Fonction vérification de ligne pour savoir si la ligne est complete ou non(Nécessaire d'imprimer les pieces dans l'array)
+#TODO:(Non prioritaire)R pour tourner la piece a 90° degrées vers la droite avec la touche flèche haut(Fonction rotation déjà en partie crée mais non implémenter)
+#TODO:(Optionnel)Space pour le hard drop (Faire descendre la piece instantanément
+#TODO:(Non prioritaire) Donne une couleur a chaque type de pièce
+#Partie menu
+#TODO:(Non prioritaire)Système de score et leaderboard(Noté 10 meilleurs scores dans un fichier (pas besoin de plus vu que l'on fait un classement type arcade)
+#TODO:(Bonus)Menu de sélection de mode de jeu
+#TODO:(Bonus)Mode survie
+#TODO:(Bonus)Mode course
+
+
 import pygame
 import time
 
 n = 0
 grid_array = []
-while n < 22:
+while n < 23:
     grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
 
 
 def draw_pieces(piece, position):
     if position is None:
-        position = [0, 0]
+        position = [1, 1]
 
     j = position[1]
     for x in piece:
@@ -95,14 +108,15 @@ while pygame.event.wait().type != pygame.QUIT:
             start_time = current_time
     draw_pieces(Z_Block, pos)
     USI = pygame.key.get_pressed()
+    #if USI[pygame.K_UP]
     if USI[pygame.K_LEFT]:
-        if USI[pygame.K_LEFT] and pos[0] > 0:
+        if pos[0] > 0:
             window.fill((0, 0, 0))
             grille()
             pos[0] -= 1
             print("gauche")
     if USI[pygame.K_RIGHT]:
-        if USI[pygame.K_RIGHT] and pos[0] < 7:
+        if pos[0] < 7:
             window.fill((0, 0, 0))
             grille()
             pos[0] += 1
