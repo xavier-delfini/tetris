@@ -6,19 +6,22 @@
 #TODO:(Non prioritaire) Donne une couleur a chaque type de pièce
 #TODO:(Optionnel)Mettre les paramètres dans un fichier séparer (Temps initial descente piece,intervalle d'augmentation de ce temps,couleurs des pièces,pieces en elle même)
 #Partie menu
+#TODO:(Non prioritaire)Affichage des prochaines pieces
 #TODO:(Non prioritaire)Système de score et leaderboard(Noté 10 meilleurs scores dans un fichier (pas besoin de plus vu que l'on fait un classement type arcade)
 #TODO:(Bonus)Menu de sélection de mode de jeu
 #TODO:(Bonus)Mode survie
 #TODO:(Bonus)Mode course
 
 
+
 import pygame
 import time
-
+import random
+clock = pygame.time.Clock()
 n = 0
 grid_array = []
 while n < 22:
-    grid_array.append([1, 2, 3, 4, 5, 6, 7, 0, 0, 0])
+    grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
 
 def draw_array():
@@ -28,7 +31,7 @@ def draw_array():
         for b in l:
             match b:
                 case 0:
-                   color=(0,0,0)
+                    color=(0, 0, 0)
                 case 1:#Line
                     color=(0, 240, 240)
                 case 2:#Reverse L
@@ -51,7 +54,8 @@ def draw_array():
 
 def draw_bloc(color,position):
     width, height = calc_position_grid(position)
-    pygame.draw.rect(window, color, ((height, width), (22, 22)), 0)
+    if color !=(0,0,0):
+        pygame.draw.rect(window, color, ((height, width), (22, 22)), 0)
 def draw_pieces(piece, position):
     if position is None:
         position = [-1, -1]
@@ -64,9 +68,6 @@ def draw_pieces(piece, position):
             if y == 1:
                 pygame.draw.rect(window, (0, 255, 255), ((width, height), (22, 22)), 0)
                 pygame.display.flip()
-            else:
-                pygame.draw.rect(window, (0, 0, 0), ((width, height), (22, 22)), 0)
-                pygame.display.flip()
             i += 1
         j += 1
 
@@ -75,7 +76,9 @@ def calc_position_grid(position):
     calc_width = 12 + (25 * position[0])
     calc_height = 12 + (25 * position[1])
     return calc_width, calc_height
+#TODO:def calc_collisions(piece,pos):
 
+#TODO:def update_array(piece,pos):
 
 # Définition des pieces
 Line = [[0, 0, 0, 0],
@@ -117,7 +120,47 @@ def grille():
        pygame.draw.line(window, (255, 255, 255), (10, i), (260, i))
        pygame.draw.line(window, (255, 255, 255), (i, 10), (i, 560))
 
+def rotation(piece):
+    match len(piece):
 
+        #Square
+        case 2:
+            new_piece=piece
+        #L reverseL,S_Block,Z_block
+        case 3:
+            new_piece=[[0,0,0],
+                       [0,0,0],
+                       [0,0,0]]
+            #TODO:A optimiser
+            new_piece[0][0]=piece[2][0]
+            new_piece[0][1]=piece[1][0]
+            new_piece[0][2]=piece[0][0]
+            new_piece[1][0]=piece[2][1]
+            new_piece[1][1]=piece[1][1]
+            new_piece[1][2]=piece[0][1]
+            new_piece[2][0]=piece[2][2]
+            new_piece[2][1]=piece[1][2]
+            new_piece[2][2]=piece[0][2]
+        #Line
+        case 4:
+            new_piece = [[0, 0, 0,0],
+                         [0, 0, 0,0],
+                         [0, 0, 0,0],
+                         [0, 0, 0,0]]
+            #TODO:A optimiser aussi
+            new_piece[0][1]=piece[2][0]
+            new_piece[0][2]=piece[1][0]
+            new_piece[1][0]=piece[3][1]
+            new_piece[1][1]=piece[2][1]
+            new_piece[1][2]=piece[1][1]
+            new_piece[1][3]=piece[0][1]
+            new_piece[2][0]=piece[0][2]
+            new_piece[2][1]=piece[2][2]
+            new_piece[2][2]=piece[1][2]
+            new_piece[2][3]=piece[3][2]
+            new_piece[3][1]=piece[2][3]
+            new_piece[3][2]=piece[1][3]
+            return new_piece
 
 grille()
 draw_array()
@@ -133,26 +176,23 @@ USI = pygame.key.get_pressed()
 while pygame.event.wait().type != pygame.QUIT:
     current_time = time.time()
     draw_array()
-    if current_time - start_time > 0.08: # deplace la pièce selon le temps donner
+    if current_time - start_time > 0.08: # déplace la pièce selon le temps donner
         if pos[1] < 20:
-            window.fill((0, 0, 0))
-            grille()
             pos[1] += 1 # déplacer la pièce vers le bas
             start_time = current_time
     draw_pieces(Z_Block, pos)
     USI = pygame.key.get_pressed()
     #if USI[pygame.K_UP]
-    if USI[pygame.K_LEFT]:
-        if pos[0] > 0:
-            window.fill((0, 0, 0))
-            pos[0] -= 1
-            print("gauche")
-    if USI[pygame.K_RIGHT]:
-        if pos[0] < 7:
-            window.fill((0, 0, 0))
-            pos[0] += 1
-            print("droite")
+    if USI[pygame.K_LEFT] and pos[0] > 0:
+
+        pos[0] -= 1
+        print("gauche")
+    if USI[pygame.K_RIGHT] and pos[0] < 7:
+        pos[0] += 1
+        print("droite")
+    window.fill((0, 0, 0))
     grille()
+    draw_array()
 # K_LEFT K_RIGHT K_UP K_DOWN
 
 
