@@ -23,7 +23,17 @@ grid_array = []
 while n < 22:
     grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
+def collision(piece):
+    m=0
+    match len(piece):
+        case 3:
+            while m<3:
+                if piece[m][0]+piece[m][1]+piece[m][2] ==0:
+                    piece.pop(m)
+                m+=1
 
+        #case 4:
+    return piece
 def draw_array():
     m=0
     for l in grid_array:
@@ -57,6 +67,7 @@ def draw_bloc(color,position):
     if color !=(0,0,0):
         pygame.draw.rect(window, color, ((height, width), (22, 22)), 0)
 def draw_pieces(piece, position):
+    collision(piece)
     if position is None:
         position = [-1, -1]
 
@@ -172,15 +183,14 @@ pos = [i, f]
 
 start_time = time.time()
 
-USI = pygame.key.get_pressed()
 while pygame.event.wait().type != pygame.QUIT:
+    USI = pygame.key.get_pressed()
     current_time = time.time()
     draw_array()
-    if current_time - start_time > 0.08: # déplace la pièce selon le temps donner
+    if current_time - start_time > 0.50: # déplace la pièce selon le temps donner
         if pos[1] < 20:
             pos[1] += 1 # déplacer la pièce vers le bas
             start_time = current_time
-    draw_pieces(Z_Block, pos)
     USI = pygame.key.get_pressed()
     #if USI[pygame.K_UP]
     if USI[pygame.K_LEFT] and pos[0] > 0:
@@ -193,6 +203,5 @@ while pygame.event.wait().type != pygame.QUIT:
     window.fill((0, 0, 0))
     grille()
     draw_array()
-# K_LEFT K_RIGHT K_UP K_DOWN
-
+    draw_pieces(Z_Block, pos)
 
