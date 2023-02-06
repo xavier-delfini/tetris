@@ -1,4 +1,5 @@
 import pygame
+import time
 
 n = 0
 grid_array = []
@@ -81,8 +82,17 @@ i = 3
 f = 4
 pos = [i, f]
 
+start_time = time.time()
+
 USI = pygame.key.get_pressed()
 while pygame.event.wait().type != pygame.QUIT:
+    current_time = time.time()
+    if current_time - start_time > 0.08: # deplace la pièce selon le temps donner
+        if pos[1] < 20:
+            window.fill((0, 0, 0))
+            grille()
+            pos[1] += 1 # déplacer la pièce vers le bas
+            start_time = current_time
     draw_pieces(Z_Block, pos)
     USI = pygame.key.get_pressed()
     if USI[pygame.K_LEFT]:
