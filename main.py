@@ -162,16 +162,23 @@ def grille():
         pygame.draw.line(window, (255, 255, 255), (i, 10), (i, 560))
 
 
-def verif_collision(piece, position, grid):
+def verif_collision(piece, position, grid,direction):
     i = 0
-    for c in piece[-1]:
-        print(position[1] + len(piece))
-        if position[1] + 1 == 23 - len(piece) or (
-                grid[position[1] + len(piece)][(position[0] + i)] > 0 and c > 0):
-            return 1
-        i += 1
+    for x in piece:
+        match direction:
+            case "Down":
+                j=0
+                for y in x:
 
+                    print(position[1] + len(piece))
+                    if position[1] + 1 == 23 - len(piece) or (
+                            grid[position[1] + len(piece)][(position[0] + j)] > 0 and y > 0):
+                        return 1
+                    j+=1
 
+                i += 1
+            case "Left":
+                pass
 def rotation(piece):
     match len(piece):
 
@@ -231,7 +238,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
     if current_time - start_time > 0.16:  # déplace la pièce selon le temps donner
-        if verif_collision(piece, pos, grid_array) == 1:
+        if verif_collision(piece, pos, grid_array,"Down") == 1:
             piece = random.choice(piece_list)
             pos = [3, 0]
         pos[1] += 1  # déplacer la pièce vers le bas
