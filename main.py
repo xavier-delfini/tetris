@@ -20,41 +20,55 @@ grid_array = []
 while n < 22:
     grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
+grid_array[11]=[1, 1, 1, 0, 0, 0, 0, 1, 1, 0]
+
 def collision(piece):
-    m=0
+    m=-1
     match len(piece):
         case 3:
-            while m<3:
+            while m<len(piece):
+
                 if piece[m][0]+piece[m][1]+piece[m][2] ==0:
                     piece.pop(m)
-                m+=1
+                    m=0
+                m += 1
 
-        #case 4:
+        case 4:
+            while m < len(piece):
+
+                if piece[m][0] + piece[m][1] + piece[m][2]+ piece[m][3] == 0:
+                    piece.pop(m)
+                    m=0
+                m += 1
     return piece
+
+def color_selector(piece):
+    match piece:
+        case 0:  # Blank
+            color = (0, 0, 0)
+        case 1:  # Line
+            color = (0, 240, 240)
+        case 2:  # Reverse L
+            color = (0, 0, 240)
+        case 3:  # L
+            color = (240, 160, 0)
+        case 4:  # Square
+            color = (240, 240, 0)
+        case 5:  # Z_BLOCK
+            color = (0, 240, 0)
+        case 6:  # T_Block
+            color = (160, 0, 240)
+        case 7:  # S_Block
+            color = (240, 0, 0)
+        case _:
+            exit()
+    return color
 def draw_array():
     m=0
     for l in grid_array:
         n=0
         for b in l:
-            match b:
-                case 0:#Blank
-                    color=(0, 0, 0)
-                case 1:#Line
-                    color=(0, 240, 240)
-                case 2:#Reverse L
-                    color=(0, 0, 240)
-                case 3:#L
-                    color=(240, 160, 0)
-                case 4:#Bloc
-                    color=(240, 240, 0)
-                case 5:#Z_BLOCK
-                    color=(0, 240, 0)
-                case 6:#T_Block
-                    color=(160, 0, 240)
-                case 7:#S_Block
-                    color=(240, 0, 0)
-                case _:
-                    exit()
+            color=color_selector(b)
             draw_bloc(color,[m,n])
             n+=1
         m+=1
@@ -74,51 +88,51 @@ def draw_pieces(piece, position):
         i = position[0]
         for y in x:
             width, height = calc_position_grid([i, j])
-            if y == 1:
-                pygame.draw.rect(window, (0, 255, 255), ((width, height), (22, 22)), 0)
+            if y > 0:
+                color=color_selector(y)
+                pygame.draw.rect(window, color, ((width, height), (22, 22)), 0)
                 pygame.display.flip()
             i += 1
         j += 1
-
+    return piece
 
 def calc_position_grid(position):
     calc_width = 12 + (25 * position[0])
     calc_height = 12 + (25 * position[1])
     return calc_width, calc_height
-#TODO:def calc_collisions(piece,pos):
 
 #TODO:def update_array(piece,pos):
 
-# Définition des pieces
+# Définition des pieces(Les array sont carré afin de facilité leur rotation)
 Line = [[0, 0, 0, 0],
         [1, 1, 1, 1],
         [0, 0, 0, 0],
         [0, 0, 0, 0]
         ]
 
-Reverse_L = [[1, 0, 0],
-             [1, 1, 1],
+Reverse_L = [[2, 0, 0],
+             [2, 2, 2],
              [0, 0, 0]]
 
-L = [[0, 0, 1],
-     [1, 1, 1],
+L = [[0, 0, 3],
+     [3, 3, 3],
      [0, 0, 0]]
 
-Square = [[1, 1],
-          [1, 1]]
+Square = [[4, 4],
+          [4, 4]]
 
-S_Block = [[0, 1, 1],
-           [1, 1, 0],
+Z_Block = [[5, 5, 0],
+           [0, 5, 5],
            [0, 0, 0]]
 
-T_Block = [[0, 1, 0],
-           [1, 1, 1],
+T_Block = [[0, 6, 0],
+           [6, 6, 6],
            [0, 0, 0]]
 
-Z_Block = [[1, 1, 0],
-           [0, 1, 1],
+S_Block = [[0, 7, 7],
+           [7, 7, 0],
            [0, 0, 0]]
-
+piece_list=(Line,Reverse_L,L,Square,Z_Block,T_Block,S_Block)
 pygame.init()
 
 window = pygame.display.set_mode((270, 570))
@@ -128,6 +142,15 @@ def grille():
     for i in range(10, 561, 25):
        pygame.draw.line(window, (255, 255, 255), (10, i), (260, i))
        pygame.draw.line(window, (255, 255, 255), (i, 10), (i, 560))
+
+def verif_collision(piece, position, grid):
+    i = 0
+    for c in piece[-1]:
+        print(position[1]+len(piece))
+        if position[1]+len(piece)-1 == 23-len(piece) or (grid[position[1]+len(piece)][(position[0]+i)] > 0 and c > 0):
+            return 1
+        i += 1
+    i+=1
 
 def rotation(piece):
     match len(piece):
@@ -174,25 +197,26 @@ def rotation(piece):
 grille()
 draw_array()
 pygame.display.update()
-
+piece=random.choice(piece_list)
 i = 3
-f = 4
+f = 0
 pos = [i, f]
 fpsClock = pygame.time.Clock()
 FPS=15
 start_time = time.time()
-
 while True:
+    print(piece)
     current_time = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-    USI = pygame.key.get_pressed()
     if current_time - start_time > 0.50: # déplace la pièce selon le temps donner
-        if pos[1] < 20:
-            pos[1] += 1 # déplacer la pièce vers le bas
-            start_time = current_time
-            fpsClock.tick(FPS)
+        if verif_collision(piece,pos,grid_array)==1:
+            piece=random.choice(piece_list)
+            pos =[3,0]
+        pos[1] += 1 # déplacer la pièce vers le bas
+        start_time = current_time
+        fpsClock.tick(FPS)
     USI = pygame.key.get_pressed()
     #if USI[pygame.K_UP]
     if USI[pygame.K_LEFT] and pos[0] > 0:
@@ -207,6 +231,5 @@ while True:
     window.fill((0, 0, 0))
     grille()
     draw_array()
-    draw_pieces(Z_Block, pos)
+    piece=draw_pieces(piece, pos)
     fpsClock.tick(FPS)
-
