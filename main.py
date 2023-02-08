@@ -22,8 +22,8 @@ while n < 22:
     n += 1
 grid_array[11]=[1, 1, 1, 0, 0, 0, 0, 1, 1, 0]
 
-def collision(piece):
-    m=-1
+def hitbox_affinate(piece):
+    m=0
     match len(piece):
         case 3:
             while m<len(piece):
@@ -79,7 +79,7 @@ def draw_bloc(color,position):
     if color !=(0,0,0):
         pygame.draw.rect(window, color, ((height, width), (22, 22)), 0)
 def draw_pieces(piece, position):
-    piece=collision(piece)
+    piece=hitbox_affinate(piece)
     if position is None:
         position = [-1, -1]
 
@@ -147,10 +147,9 @@ def verif_collision(piece, position, grid):
     i = 0
     for c in piece[-1]:
         print(position[1]+len(piece))
-        if position[1]+len(piece)-1 == 23-len(piece) or (grid[position[1]+len(piece)][(position[0]+i)] > 0 and c > 0):
+        if position[1]+len(piece)-(len(piece)-1) == 23-len(piece) or (grid[position[1]+len(piece)][(position[0]+i)] > 0 and c > 0):
             return 1
         i += 1
-    i+=1
 
 def rotation(piece):
     match len(piece):
@@ -202,15 +201,14 @@ i = 3
 f = 0
 pos = [i, f]
 fpsClock = pygame.time.Clock()
-FPS=15
+FPS=120#15
 start_time = time.time()
 while True:
-    print(piece)
     current_time = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-    if current_time - start_time > 0.50: # déplace la pièce selon le temps donner
+    if current_time - start_time > 0.16: # déplace la pièce selon le temps donner
         if verif_collision(piece,pos,grid_array)==1:
             piece=random.choice(piece_list)
             pos =[3,0]
@@ -224,7 +222,7 @@ while True:
         pos[0] -= 1
         print("gauche")
         fpsClock.tick(FPS)
-    if USI[pygame.K_RIGHT] and pos[0] < 7:
+    if USI[pygame.K_RIGHT] and pos[0] < 10-len(piece[-1]):
         pos[0] += 1
         print("droite")
         fpsClock.tick(FPS)
