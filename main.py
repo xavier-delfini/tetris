@@ -11,9 +11,6 @@
 #TODO:(Bonus)Menu de sélection de mode de jeu
 #TODO:(Bonus)Mode survie
 #TODO:(Bonus)Mode course
-
-
-
 import pygame
 import time
 import random
@@ -40,7 +37,7 @@ def draw_array():
         n=0
         for b in l:
             match b:
-                case 0:
+                case 0:#Blank
                     color=(0, 0, 0)
                 case 1:#Line
                     color=(0, 240, 240)
@@ -62,12 +59,13 @@ def draw_array():
             n+=1
         m+=1
 
+
 def draw_bloc(color,position):
     width, height = calc_position_grid(position)
     if color !=(0,0,0):
         pygame.draw.rect(window, color, ((height, width), (22, 22)), 0)
 def draw_pieces(piece, position):
-    collision(piece)
+    piece=collision(piece)
     if position is None:
         position = [-1, -1]
 
@@ -180,28 +178,35 @@ pygame.display.update()
 i = 3
 f = 4
 pos = [i, f]
-
+fpsClock = pygame.time.Clock()
+FPS=15
 start_time = time.time()
 
-while pygame.event.wait().type != pygame.QUIT:
-    USI = pygame.key.get_pressed()
+while True:
     current_time = time.time()
-    draw_array()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+    USI = pygame.key.get_pressed()
     if current_time - start_time > 0.50: # déplace la pièce selon le temps donner
         if pos[1] < 20:
             pos[1] += 1 # déplacer la pièce vers le bas
             start_time = current_time
+            fpsClock.tick(FPS)
     USI = pygame.key.get_pressed()
     #if USI[pygame.K_UP]
     if USI[pygame.K_LEFT] and pos[0] > 0:
 
         pos[0] -= 1
         print("gauche")
+        fpsClock.tick(FPS)
     if USI[pygame.K_RIGHT] and pos[0] < 7:
         pos[0] += 1
         print("droite")
+        fpsClock.tick(FPS)
     window.fill((0, 0, 0))
     grille()
     draw_array()
     draw_pieces(Z_Block, pos)
+    fpsClock.tick(FPS)
 
