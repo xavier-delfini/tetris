@@ -21,7 +21,6 @@ grid_array = []
 while n < 22:
     grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
-grid_array[11] = [1, 1, 1, 0, 0, 0, 0, 1, 1, 0]
 
 
 def hitbox_affinate(piece):
@@ -115,10 +114,11 @@ def update_array(piece, pos, grid):
     for x in piece:
         j = 0
         for y in x:
-            grid[pos[0]] = []
+            if y > 0:
+                grid[pos[1]+i][pos[0]+j] = piece[i][j]
             j += 1
-
         i += 1
+    return grid
 
 
 # Définition des pieces(Les array sont carré afin de facilité leur rotation)
@@ -163,7 +163,7 @@ def grille():
 
 
 def verif_collision(piece, position, grid,direction):
-    i = 0
+    i = len(piece)-1
     for x in piece:
         match direction:
             case "Down":
@@ -172,16 +172,17 @@ def verif_collision(piece, position, grid,direction):
 
                     print(position[1] + len(piece))
                     if position[1] + 1 == 23 - len(piece) or (
-                            grid[position[1] + len(piece)][(position[0] + j)] > 0 and y > 0):
+                            grid[position[1]-i + len(piece)][(position[0] + j)] > 0 and y > 0):
                         return 1
-                    j+=1
+                    j += 1
 
-                i += 1
+                i -= 1
             case "Left":
-                pass
-def rotation(piece):
+                if grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0:
+                    pass
+def rotation(array_piece):
+    array_piece[0]=piece
     match len(piece):
-
         # Square
         case 2:
             new_piece = piece
@@ -202,50 +203,69 @@ def rotation(piece):
             new_piece[2][2] = piece[0][2]
         # Line
         case 4:
-            new_piece = [[0, 0, 0, 0],
-                         [0, 0, 0, 0],
-                         [0, 0, 0, 0],
-                         [0, 0, 0, 0]]
-            # TODO:A optimiser aussi
-            new_piece[0][1] = piece[2][0]
-            new_piece[0][2] = piece[1][0]
-            new_piece[1][0] = piece[3][1]
-            new_piece[1][1] = piece[2][1]
-            new_piece[1][2] = piece[1][1]
-            new_piece[1][3] = piece[0][1]
-            new_piece[2][0] = piece[0][2]
-            new_piece[2][1] = piece[2][2]
-            new_piece[2][2] = piece[1][2]
-            new_piece[2][3] = piece[3][2]
-            new_piece[3][1] = piece[2][3]
-            new_piece[3][2] = piece[1][3]
-            return new_piece
+            i=0
+            while i<piece[0]:
+                new_piece = [[0, 0, 0, 0],
+                             [0, 0, 0, 0],
+                             [0, 0, 0, 0],
+                             [0, 0, 0, 0]]
+                # TODO:A optimiser aussi
+                new_piece[0][1] = piece[2][0]
+                new_piece[0][2] = piece[1][0]
+                new_piece[1][0] = piece[3][1]
+                new_piece[1][1] = piece[2][1]
+                new_piece[1][2] = piece[1][1]
+                new_piece[1][3] = piece[0][1]
+                new_piece[2][0] = piece[0][2]
+                new_piece[2][1] = piece[2][2]
+                new_piece[2][2] = piece[1][2]
+                new_piece[2][3] = piece[3][2]
+                new_piece[3][1] = piece[2][3]
+                new_piece[3][2] = piece[1][3]
+                new_piece=piece[0]
+                i+=1
+    if piece[1]<4:
+        piece[1]+=1
+    else:
+        piece[1]=1
+
+    return new_piece
 
 
 grille()
 draw_array()
 pygame.display.update()
 piece = random.choice(piece_list)
+piece_initial=[0,0]
+piece_initial[0]= piece
+piece_initial[1]= 1
 i = 3
 f = 0
 pos = [i, f]
 fpsClock = pygame.time.Clock()
-FPS = 120  # 15
+FPS = 15
 start_time = time.time()
 while True:
     current_time = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-    if current_time - start_time > 0.16:  # déplace la pièce selon le temps donner
+    if current_time - start_time > 0.01:  # déplace la pièce selon le temps donner
         if verif_collision(piece, pos, grid_array,"Down") == 1:
+            grid_array=update_array(piece, pos, grid_array)
             piece = random.choice(piece_list)
+            piece_initial=[0,0]
+            piece_initial[0]= piece
+            piece_initial[1]= 1
+
             pos = [3, 0]
-        pos[1] += 1  # déplacer la pièce vers le bas
+        else:
+            pos[1] += 1  # déplacer la pièce vers le bas
         start_time = current_time
         fpsClock.tick(FPS)
     USI = pygame.key.get_pressed()
-    # if USI[pygame.K_UP]
+    if USI[pygame.K_UP]:
+        rotation(piece_initial)
     if USI[pygame.K_LEFT] and pos[0] > 0:
         pos[0] -= 1
         print("gauche")
