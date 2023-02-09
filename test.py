@@ -22,24 +22,16 @@ while True:
     position=verif_collision(T_Block,position,grid_array)
     position[1]+=1
 """
-def collision(piece):
-    m=-1
-    match len(piece):
-        case 3:
-            while m<len(piece):
+test = [0, 1, 2, 3, 4, 5]
+testo = [0, 1, 2, 3, 4, 5]
 
-                if piece[m][0]+piece[m][1]+piece[m][2] ==0:
-                    piece.pop(m)
-                    m=0
-                m += 1
 
-        case 4:
-            while m < len(piece):
+def new_piece(test, testo):
+    p_test = [testo, 1]
+    print(p_test)
+    test.remove(3)
+    print(p_test)
 
-                if piece[m][0] + piece[m][1] + piece[m][2]+ piece[m][3] == 0:
-                    piece.pop(m)
-                    m=0
-                m += 1
-    return piece
 
-print(collision(T_Block))
+
+new_piece(test, testo)
