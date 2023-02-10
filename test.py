@@ -21,17 +21,35 @@ def verif_collision(piece,position,grid):
 while True:
     position=verif_collision(T_Block,position,grid_array)
     position[1]+=1
-"""
+""""""
 test = [0, 1, 2, 3, 4, 5]
-testo = [0, 1, 2, 3, 4, 5]
 
 
-def new_piece(test, testo):
-    p_test = [testo, 1]
-    print(p_test)
+
+def new_piece(test):
+    tost=test
+    remove(test)
+    print(tost)
+    print(test)
+
+def remove(test):
     test.remove(3)
-    print(p_test)
+    return test
 
 
+new_piece(test)
+"""
+n = 9001
+def main(n):
 
-new_piece(test, testo)
+
+    x=increment(n)
+    print (x)
+    print (n)
+
+
+def increment(x):
+    x += 1
+    return x
+
+main(n)

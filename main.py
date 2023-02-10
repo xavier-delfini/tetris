@@ -12,7 +12,8 @@
 import pygame
 import time
 import random
-
+import copy
+from parameters import *
 clock = pygame.time.Clock()
 n = 0
 grid_array = []
@@ -24,10 +25,16 @@ def hitbox_affinate(hitbox):
     match len(hitbox):
         case 3:
             while m < len(hitbox):
+                try:
+                    if hitbox[m][0] + hitbox[m][1] + hitbox[m][2] == 0:
+                        hitbox.pop(m)
+                        m = 0
 
-                if hitbox[m][0] + hitbox[m][1] + hitbox[m][2] == 0:
-                    hitbox.pop(m)
-                    m = 0
+                    elif hitbox[0][m]+ hitbox[1][m] + hitbox[2][m] == 0:
+                        del hitbox[0][m],hitbox[1][m],hitbox[2][m]
+                        m=0
+                except IndexError:
+                    pass
                 m += 1
 
         case 4:
@@ -38,29 +45,6 @@ def hitbox_affinate(hitbox):
                     m = 0
                 m += 1
     return hitbox
-
-
-def color_selector(color_code):
-    match color_code:
-        case 0:  # Blank
-            color = (0, 0, 0)
-        case 1:  # Line
-            color = (0, 240, 240)
-        case 2:  # Reverse L
-            color = (0, 0, 240)
-        case 3:  # L
-            color = (240, 160, 0)
-        case 4:  # Square
-            color = (240, 240, 0)
-        case 5:  # Z_BLOCK
-            color = (0, 240, 0)
-        case 6:  # T_Block
-            color = (160, 0, 240)
-        case 7:  # S_Block
-            color = (240, 0, 0)
-        case _:
-            exit()
-    return color
 
 
 def draw_array():
@@ -81,6 +65,7 @@ def draw_bloc(color, position):
 
 
 def draw_pieces(d_piece, position):
+    hitbox_affinate(d_piece)
     if position is None:
         position = [-1, -1]
 
@@ -115,41 +100,6 @@ def update_array(piece, pos, grid):
     return grid
 
 
-# Définition des pieces(Les array sont carré afin de facilité leur rotation)
-Line = [[0, 0, 0, 0],
-        [1, 1, 1, 1],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-        ]
-
-Reverse_L = [[2, 0, 0],
-             [2, 2, 2],
-             [0, 0, 0]]
-
-L = [[0, 0, 3],
-     [3, 3, 3],
-     [0, 0, 0]]
-
-Square = [[4, 4],
-          [4, 4]]
-
-Z_Block = [[5, 5, 0],
-           [0, 5, 5],
-           [0, 0, 0]]
-
-T_Block = [[0, 6, 0],
-           [6, 6, 6],
-           [0, 0, 0]]
-
-S_Block = [[0, 7, 7],
-           [7, 7, 0],
-           [0, 0, 0]]
-piece_list = (Line, Reverse_L, L, Square, Z_Block, T_Block, S_Block)
-pygame.init()
-
-window = pygame.display.set_mode((270, 570))
-
-
 def grille():
     for i in range(10, 561, 25):
         pygame.draw.line(window, (255, 255, 255), (10, i), (260, i))
@@ -172,24 +122,21 @@ def verif_collision(piece, position, grid,direction):
             case "Left":
                 if grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0:
                     pass
+
+
 def rotation(array_piece):
     piece=array_piece[0]
     rotation_count=array_piece[1]
     i=0
-    match len(piece):
-        # Square
-
+    match len(piece[0]):
         # L reverseL,S_Block,Z_block
         case 3:
-            while i <= rotation_count:
+            while i < rotation_count:
                 new_piece = [[0, 0, 0],
                              [0, 0, 0],
                              [0, 0, 0]]
                 # TODO:A optimiser
                 new_piece[0]=[piece[2][0],piece[1][0],piece[0][0]]
-                new_piece[0][0] = piece[2][0]
-                new_piece[0][1] = piece[1][0]
-                new_piece[0][2] = piece[0][0]
                 new_piece[1][0] = piece[2][1]
                 new_piece[1][1] = piece[1][1]
                 new_piece[1][2] = piece[0][1]
@@ -227,35 +174,42 @@ def rotation(array_piece):
 
     return piece,rotation_count
 
+#La mémoire de python étant ce qu'elle est cette fonction est obligatoire pour garder certains paramètres intactes
+# tout en les modifiants dans une autre variable
 
+pos = copy.copy(pos_initial)
+pygame.init()
+window = pygame.display.set_mode((270, 570))
 grille()
 draw_array()
 pygame.display.update()
-
-random_piece = random.choice(piece_list)
-p_initial =  [random_piece, 1]
-piece=hitbox_affinate(random_piece)
-pos = [3, 0]
+def next_piece():
+    random_piece = random.choice(piece_list)
+    initial_piece=[random_piece,1]
+    piece = copy.copy(random_piece)
+    return piece,initial_piece
+piece,initial_piece=next_piece()
 fpsClock = pygame.time.Clock()
-FPS = 15
 start_time = time.time()
 while True:
     current_time = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-    if current_time - start_time > 0.15:  # déplace la pièce selon le temps donner
+    if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donner
         if verif_collision(piece, pos, grid_array,"Down") == 1:
             grid_array=update_array(piece, pos, grid_array)
-            piece,p_initial=new_piece()
-            pos = [3, 0]
+            piece, initial_piece = next_piece()
+            pos = copy.copy(pos_initial)
         else:
             pos[1] += 1  # déplacer la pièce vers le bas
         start_time = current_time
         fpsClock.tick(FPS)
     USI = pygame.key.get_pressed()
     if USI[pygame.K_r]:
-        piece,p_initial[1] = rotation(p_initial)
+        piece,initial_piece[1]=rotation(initial_piece)
+
+
         start_time = current_time
         fpsClock.tick(FPS)
     if USI[pygame.K_LEFT] and pos[0] > 0:
