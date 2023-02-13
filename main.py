@@ -1,7 +1,7 @@
 # Partie jeu:
 # TODO:(Prioritaire 2)Fonction vérification de ligne pour savoir si la ligne est complete ou non(Nécessaire d'imprimer les pieces dans l'array)
-# TODO:(Non prioritaire)R pour tourner la piece a 90° degrées vers la droite avec la touche flèche haut(Fonction rotation déjà en partie crée mais non implémenter)
 # TODO:(Optionnel)Space pour le hard drop (Faire descendre la piece instantanément
+# TODO:(Prioritaire 1)Faire les collision pour le déplacement a gauche ou a droite
 # TODO:(Optionnel)Mettre les paramètres dans un fichier séparer (Temps initial descente piece,intervalle d'augmentation de ce temps,couleurs des pièces,pieces en elle même)
 # Partie menu
 # TODO:(Non prioritaire)Affichage des prochaines pieces
@@ -20,9 +20,11 @@ grid_array = []
 while n < 22:
     grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
+
+
 def hitbox_affinate(hitbox):
     m = 0
-    match len(hitbox):
+    match len(hitbox[m]):
         case 3:
             while m < len(hitbox):
                 try:
@@ -30,19 +32,30 @@ def hitbox_affinate(hitbox):
                         hitbox.pop(m)
                         m = 0
 
-                    elif hitbox[0][m]+ hitbox[1][m] + hitbox[2][m] == 0:
-                        del hitbox[0][m],hitbox[1][m],hitbox[2][m]
-                        m=0
+                    elif hitbox[0][m] + hitbox[1][m] + hitbox[2][m] == 0:
+                        del hitbox[0][m], hitbox[1][m], hitbox[2][m]
+                        m = 0
                 except IndexError:
                     pass
                 m += 1
 
         case 4:
             while m < len(hitbox):
+                try:
+                    if hitbox[0][m]+ hitbox[1][m] + hitbox[2][m] + hitbox[3][m] == 0:
+                        del hitbox[0][m], hitbox[1][m], hitbox[2][m], hitbox[3][m]
+                        m = 0
+                except IndexError:
+                    pass
+                try:
+                    if hitbox[m][0] + hitbox[m][1] + hitbox[m][2] + hitbox[m][3] == 0:
+                        hitbox.pop(m)
+                        m = 0
+                except IndexError:
+                    pass
 
-                if hitbox[m][0] + hitbox[m][1] + hitbox[m][2] + hitbox[m][3] == 0:
-                    hitbox.pop(m)
-                    m = 0
+
+
                 m += 1
     return hitbox
 
@@ -109,9 +122,10 @@ def grille():
 def verif_collision(piece, position, grid,direction):
     i = len(piece)-1
     for x in piece:
+        j=0
         match direction:
             case "Down":
-                j=0
+
                 for y in x:
                     if position[1] + 1 == 23 - len(piece) or (
                             grid[position[1]-i + len(piece)][(position[0] + j)] > 0 and y > 0):
@@ -120,14 +134,17 @@ def verif_collision(piece, position, grid,direction):
 
                 i -= 1
             case "Left":
-                if grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0:
-                    pass
+                for y in x:
+                    if grid[position[1] - i  + len(piece)][(position[0] + j)] > 0 and y > 0:
+
+
+                        pass
 
 
 def rotation(array_piece):
-    piece=array_piece[0]
-    rotation_count=array_piece[1]
-    i=0
+    piece = array_piece[0]
+    rotation_count = array_piece[1]
+    i = 0
     match len(piece[0]):
         # L reverseL,S_Block,Z_block
         case 3:
@@ -135,16 +152,15 @@ def rotation(array_piece):
                 new_piece = [[0, 0, 0],
                              [0, 0, 0],
                              [0, 0, 0]]
-                # TODO:A optimiser
                 new_piece[0]=[piece[2][0],piece[1][0],piece[0][0]]
-                new_piece[1][0] = piece[2][1]
-                new_piece[1][1] = piece[1][1]
-                new_piece[1][2] = piece[0][1]
-                new_piece[2][0] = piece[2][2]
-                new_piece[2][1] = piece[1][2]
-                new_piece[2][2] = piece[0][2]
+                new_piece[1]=[piece[2][1],piece[1][1],piece[0][1]]
+                new_piece[2]=[piece[2][2],piece[1][2],piece[0][2]]
                 piece = new_piece
                 i += 1
+            if rotation_count < 4:
+                rotation_count += 1
+            else:
+                rotation_count = 1
         # Line
         case 4:
             while i<rotation_count:
@@ -152,43 +168,31 @@ def rotation(array_piece):
                              [0, 0, 0, 0],
                              [0, 0, 0, 0],
                              [0, 0, 0, 0]]
-                # TODO:A optimiser aussi
-                new_piece[0][1] = piece[2][0]
-                new_piece[0][2] = piece[1][0]
-                new_piece[1][0] = piece[3][1]
-                new_piece[1][1] = piece[2][1]
-                new_piece[1][2] = piece[1][1]
-                new_piece[1][3] = piece[0][1]
-                new_piece[2][0] = piece[0][2]
-                new_piece[2][1] = piece[2][2]
-                new_piece[2][2] = piece[1][2]
-                new_piece[2][3] = piece[3][2]
-                new_piece[3][1] = piece[2][3]
-                new_piece[3][2] = piece[1][3]
-                piece=new_piece
-                i+=1
-    if rotation_count<4:
-        rotation_count+=1
-    else:
-        rotation_count=1
+                new_piece[0]=[0,piece[2][0],piece[1][0],0]
+                new_piece[1]=[piece[3][1],piece[2][1],piece[1][1],piece[0][1]]
+                new_piece[2]=[piece[0][2],piece[2][2],piece[1][2], piece[3][2]]
+                new_piece[3]=[0,piece[2][3],piece[1][3],0]
+                piece = new_piece
+                i += 1
+            if rotation_count < 2:
+                rotation_count += 1
+            else:
+                rotation_count = 1
 
-    return piece,rotation_count
+    return piece, rotation_count
 
-#La mémoire de python étant ce qu'elle est cette fonction est obligatoire pour garder certains paramètres intactes
-# tout en les modifiants dans une autre variable
+def next_piece():
+    random_piece = random.choice(piece_list)
+    initial_piece = [random_piece, 1]
+    piece = copy.copy(random_piece)
+    return piece, initial_piece
 
 pos = copy.copy(pos_initial)
 pygame.init()
 window = pygame.display.set_mode((270, 570))
 grille()
 draw_array()
-pygame.display.update()
-def next_piece():
-    random_piece = random.choice(piece_list)
-    initial_piece=[random_piece,1]
-    piece = copy.copy(random_piece)
-    return piece,initial_piece
-piece,initial_piece=next_piece()
+piece, initial_piece=next_piece()
 fpsClock = pygame.time.Clock()
 start_time = time.time()
 while True:
@@ -198,7 +202,7 @@ while True:
             pygame.quit()
     if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donner
         if verif_collision(piece, pos, grid_array,"Down") == 1:
-            grid_array=update_array(piece, pos, grid_array)
+            grid_array = update_array(piece, pos, grid_array)
             piece, initial_piece = next_piece()
             pos = copy.copy(pos_initial)
         else:
@@ -208,8 +212,6 @@ while True:
     USI = pygame.key.get_pressed()
     if USI[pygame.K_r]:
         piece,initial_piece[1]=rotation(initial_piece)
-
-
         start_time = current_time
         fpsClock.tick(FPS)
     if USI[pygame.K_LEFT] and pos[0] > 0:

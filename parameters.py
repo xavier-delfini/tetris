@@ -1,19 +1,18 @@
-#----Paramètres globaux-----
-#Position initial des pièces
+# ----Paramètres globaux-----
+# Position initial des pièces
 pos_initial = [3, 0]
 
-#Nombre d'image par seconde du jeu (une trop haute valeur peut provoquer un clignotement de la pièce
+# Nombre d'image par seconde du jeu (une trop haute valeur peut provoquer un clignotement de la pièce
 # et une accélération de la vitesse de déplacement latéral de la piece)
 FPS = 15
 
-
-
-#Peut aussi être défini manuellement
+# Peut aussi être défini manuellement
 array_actualisation = 0.15
 
-#Peut aussi être défini en fonction des FPS (déconseiller pour un jeu comme tetris)
-#array_actualisation=1/FPS
-#Pièces
+# Peut aussi être défini en fonction des FPS (déconseiller pour un jeu comme tetris)
+# array_actualisation=1/FPS
+
+# Pièces
 Line = [[0, 0, 0, 0],
         [1, 1, 1, 1],
         [0, 0, 0, 0],
@@ -43,10 +42,11 @@ S_Block = [[0, 7, 7],
            [7, 7, 0],
            [0, 0, 0]]
 
-#Liste des pièces a utiliser
-piece_list = (Line, Reverse_L, L, Square, Z_Block, T_Block, S_Block)
+# Liste des pièces a utiliser
+piece_list = (Line,Line)
+#, Reverse_L, L, Square, Z_Block, T_Block, S_Block
 
-#Couleurs a utiliser pour chaque pièces
+# Couleurs a utiliser pour chaque pièces
 def color_selector(color_code):
     match color_code:
         case 0:  # Blank

@@ -1,6 +1,10 @@
 T_Block = [[0, 6, 0],
            [6, 6, 6],
            [0, 0, 0]]
+Line = [[0, 0, 0, 0],
+        [1, 1, 1, 1],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]]
 """
 
 grid_array=[]
@@ -39,17 +43,19 @@ def remove(test):
 
 new_piece(test)
 """
-n = 9001
-def main(n):
+n = 0
+grid_array = []
+while n < 22:
+    grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+    n += 1
+grid_array[2] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 
-    x=increment(n)
-    print (x)
-    print (n)
+def all_positive(line):
+    return all(x > 0 for x in line)
 
 
-def increment(x):
-    x += 1
-    return x
-
-main(n)
+for x in grid_array:
+    if all_positive(x) == True:
+        print("Une ligne est remplie")
