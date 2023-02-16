@@ -43,8 +43,8 @@ S_Block = [[0, 7, 7],
            [0, 0, 0]]
 
 # Liste des pièces a utiliser
-piece_list = (Line,Line)
-#, Reverse_L, L, Square, Z_Block, T_Block, S_Block
+piece_list = (T_Block,T_Block)
+#Line, Reverse_L, L, Square, Z_Block, T_Block, S_Block)
 
 # Couleurs a utiliser pour chaque pièces
 def color_selector(color_code):
