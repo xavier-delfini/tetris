@@ -21,13 +21,13 @@ while n < 22:
     grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     n += 1
 score=0
-def check_array(grid_array):
-    def all_positive(line):
+def check_for_lines(grid_array):
+    def is_complete(line):
         return all(x > 0 for x in line)
     count=0
     i=0
     for line in grid_array:
-        if all_positive(line)==True:
+        if is_complete(line):
             del grid_array[i]
             grid_array.insert(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
             count +=1
@@ -44,7 +44,7 @@ def check_array(grid_array):
         case _:
             score = 0
     return grid_array,score
-print(check_array(grid_array))
+print(check_for_lines(grid_array))
 
 
 def hitbox_affinate(hitbox):
@@ -69,13 +69,7 @@ def hitbox_affinate(hitbox):
                 m += 1
 
         case 4:
-            if hitbox == [1,1,1,1]:
-                pass
-            else:
-                if (all(hitbox[0])) or (all(hitbox[1])):
-                    hitbox = [1, 1, 1, 1]
-                else:
-                    hitbox=[[1], [1], [1], [1]]
+            pass
     return hitbox
 
 
@@ -159,7 +153,7 @@ def verif_collision(piece, position, grid,direction):
                 i -= 1
             case "Left":
                 for y in x:
-                    if grid[position[1] - i  + len(piece)][(position[0] + j)] > 0 and y > 0:
+                    if grid[position[1] - i+ len(piece)][(position[0] + j)] > 0 and y > 0:
 
 
                         pass
@@ -169,8 +163,8 @@ def rotation(array_piece):
     piece = array_piece[0]
     rotation_count = array_piece[1]
     i = 0
-    match len(piece[0]):
-        case 1: new_piece = [[1],[1],[1],[1]]
+    match len(piece):
+        case 1: piece = [[1], [1], [1], [1]]
         # L reverseL,S_Block,Z_block
         case 3:
             while i < rotation_count:
@@ -188,21 +182,9 @@ def rotation(array_piece):
                 rotation_count = 1
         # Line
         case 4:
-            while i < rotation_count:
-                new_piece = [[0, 0, 0, 0],
-                             [0, 0, 0, 0],
-                             [0, 0, 0, 0],
-                             [0, 0, 0, 0]]
-                new_piece[0]=[0,piece[2][0],piece[1][0],0]
-                new_piece[1]=[piece[3][1],piece[2][1],piece[1][1],piece[0][1]]
-                new_piece[2]=[piece[0][2],piece[2][2],piece[1][2], piece[3][2]]
-                new_piece[3]=[0,piece[2][3],piece[1][3],0]
-                piece = new_piece
-                i += 1
-            if rotation_count < 2:
-                rotation_count += 1
-            else:
-                rotation_count = 1
+            piece=[
+                [1, 1, 1, 1]
+             ]
 
     return piece, rotation_count
 
@@ -226,17 +208,24 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
     if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donner
-        if verif_collision(piece, pos, grid_array,"Down") == 1:
-            grid_array = update_array(piece, pos, grid_array)
-            piece, initial_piece = next_piece()
-            pos = copy.copy(pos_initial)
+        if verif_collision(piece, pos, grid_array,"Down") == 1 and pos[1]==0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
+            pygame.quit()
         else:
-            pos[1] += 1  # déplacer la pièce vers le bas
+            if verif_collision(piece, pos, grid_array,"Down") == 1:
+                grid_array = update_array(piece, pos, grid_array)
+                piece, initial_piece = next_piece()
+                pos = copy.copy(pos_initial)
+            else:
+                pos[1] += 1  # déplacer la pièce vers le bas
         start_time = current_time
         fpsClock.tick(FPS)
     USI = pygame.key.get_pressed()
     if USI[pygame.K_r]:
         piece, initial_piece[1] = rotation(initial_piece)
+        if initial_piece[0] == [[1, 1, 1, 1]]:
+            initial_piece[0] = [[1], [1], [1], [1]]
+        elif initial_piece[0] == [[1], [1], [1], [1]]:
+            initial_piece[0] = [[1, 1, 1, 1]]
         start_time = current_time
         pygame.display.flip()
         fpsClock.tick(FPS)
@@ -246,7 +235,7 @@ while True:
     if USI[pygame.K_RIGHT] and pos[0] < 10 - len(piece[-1]):
         pos[0] += 1
         fpsClock.tick(FPS)
-    grid_array,count=check_array(grid_array)
+    grid_array,count=check_for_lines(grid_array)
     score=count + score
     print(score)
     window.fill((0, 0, 0))

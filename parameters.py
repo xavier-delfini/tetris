@@ -13,12 +13,9 @@ array_actualisation = 0.15
 # array_actualisation=1/FPS
 
 # Pièces
-Line = [[0, 0, 0, 0],
-        [1, 1, 1, 1],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
+Line = [[1, 1, 1, 1]
         ]
-
+Line_up =[[1], [1], [1], [1]]
 Reverse_L = [[2, 0, 0],
              [2, 2, 2],
              [0, 0, 0]]
@@ -43,8 +40,8 @@ S_Block = [[0, 7, 7],
            [0, 0, 0]]
 
 # Liste des pièces a utiliser
-piece_list = (T_Block,T_Block)
-#Line, Reverse_L, L, Square, Z_Block, T_Block, S_Block)
+piece_list = (Line,Line)
+#, Reverse_L, L, Square, Z_Block, T_Block, S_Block
 
 # Couleurs a utiliser pour chaque pièces
 def color_selector(color_code):
