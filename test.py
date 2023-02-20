@@ -146,38 +146,25 @@ def draw_pieces(d_piece, position):
             i += 1
         j += 1
 draw_pieces(hitbox_affinate(rotation([Line, 1])[0]),[2,0])"""
-n = 0
-grid_array = []
-while n < 22:
-    grid_array.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    n += 1
-grid_array[21]=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-grid_array[2]=[1,2, 1, 2, 1, 2, 3, 4, 5, 6]
-grid_array[3]=[1,2, 1, 2, 1, 2, 3, 4, 5, 6]
-grid_array[15]=[1,2, 1, 2, 1, 2, 3, 4, 5, 6]
 
-def check_array(grid_array):
-    def all_positive(line):
-        return all(x > 0 for x in line)
-    count=0
-    i=0
-    for line in grid_array:
-        if all_positive(line)==True:
-            del grid_array[i]
-            grid_array.insert(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-            count +=1
-        i+=1
-    match count:
-        case 1:
-            score = 1
-        case 2:
-            score = 3
-        case 3:
-            score = 5
-        case 4:
-            score = 8
-        case _:
-            score = 0
-    print(count)
-    return grid_array
-print(check_array(grid_array))
+
+def verif_collision(piece, position, grid, direction="Rotation"):
+    i = len(piece) - 1
+    for x in piece:
+        j = 0
+        match direction:
+            case "Down":
+
+                for y in x:
+                    if position[1] + 1 == 23 - len(piece) or (
+                            grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0):
+                        return 1
+                    j += 1
+
+                i -= 1
+            case "Left":
+                for y in x:
+                    if grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0:
+                        pass
+            case "Rotation":
+                print("a")

@@ -137,26 +137,34 @@ def grille():
         pygame.draw.line(window, (255, 255, 255), (i, 10), (i, 560))
 
 
-def verif_collision(piece, position, grid,direction):
-    i = len(piece)-1
+def verif_collision(piece, position, grid, direction="Rotation"):
+    i = len(piece) - 1
     for x in piece:
-        j=0
+        j = 0
         match direction:
             case "Down":
 
                 for y in x:
                     if position[1] + 1 == 23 - len(piece) or (
-                            grid[position[1]-i + len(piece)][(position[0] + j)] > 0 and y > 0):
+                            grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0):
                         return 1
                     j += 1
 
                 i -= 1
             case "Left":
                 for y in x:
-                    if grid[position[1] - i+ len(piece)][(position[0] + j)] > 0 and y > 0:
+                    if grid[position[1] - i + len(piece)][(position[0] + j-1)] > 0 and y > 0:
+                        return 1
+                    j += 1
+            case "Right":
+                for y in x:
+                    if grid[position[1] - i + len(piece)][(position[0] + j+1)] > 0 and y > 0:
+                        return 1
+                    j += 1
+            case "Rotation":
+                print("a")
 
 
-                        pass
 
 
 def rotation(array_piece):
@@ -194,12 +202,13 @@ def next_piece():
     piece = copy.copy(random_piece)
     return piece, initial_piece
 
+
 pos = copy.copy(pos_initial)
 pygame.init()
 window = pygame.display.set_mode((270, 570))
 grille()
 draw_array()
-piece, initial_piece=next_piece()
+piece, initial_piece = next_piece()
 fpsClock = pygame.time.Clock()
 start_time = time.time()
 while True:
@@ -208,15 +217,16 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
     if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donner
-        if verif_collision(piece, pos, grid_array,"Down") == 1 and pos[1]==0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
-            pygame.quit()
-        else:
-            if verif_collision(piece, pos, grid_array,"Down") == 1:
+
+        if verif_collision(piece, pos, grid_array, "Down") == 1:
+            if pos[1]==0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
+                pygame.quit()
+            else:
                 grid_array = update_array(piece, pos, grid_array)
                 piece, initial_piece = next_piece()
                 pos = copy.copy(pos_initial)
-            else:
-                pos[1] += 1  # déplacer la pièce vers le bas
+        else:#Aucunes pièce n'est présent a la case en dessous
+            pos[1] += 1  # déplace la pièce vers le bas
         start_time = current_time
         fpsClock.tick(FPS)
     USI = pygame.key.get_pressed()
@@ -230,13 +240,15 @@ while True:
         pygame.display.flip()
         fpsClock.tick(FPS)
     if USI[pygame.K_LEFT] and pos[0] > 0:
-        pos[0] -= 1
-        fpsClock.tick(FPS)
+        if verif_collision(piece, pos, grid_array, "Left") != 1:
+            pos[0] -= 1
+            fpsClock.tick(FPS)
     if USI[pygame.K_RIGHT] and pos[0] < 10 - len(piece[-1]):
-        pos[0] += 1
-        fpsClock.tick(FPS)
-    grid_array,count=check_for_lines(grid_array)
-    score=count + score
+        if verif_collision(piece, pos, grid_array, "Right") != 1:
+            pos[0] += 1
+            fpsClock.tick(FPS)
+    grid_array, count = check_for_lines(grid_array)
+    score = count + score
     print(score)
     window.fill((0, 0, 0))
     grille()
