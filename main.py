@@ -1,10 +1,9 @@
 # Partie jeu:
-# TODO:(Prioritaire 2)Fonction vérification de ligne pour savoir si la ligne est complete ou non(Nécessaire d'imprimer les pieces dans l'array)
 # TODO:(Optionnel)Space pour le hard drop (Faire descendre la piece instantanément
-# TODO:(Prioritaire 1)Faire les collision pour le déplacement a gauche ou a droite
+# TODO:(Prioritaire 1)Faire les collision pour le déplacement en diagonales
 # TODO:(Optionnel)Mettre les paramètres dans un fichier séparer (Temps initial descente piece,intervalle d'augmentation de ce temps,couleurs des pièces,pieces en elle même)
 # Partie menu
-# TODO:(Non prioritaire)Affichage des prochaines pieces
+# TODO:(Optionnel)Affichage des prochaines pieces
 # TODO:(Non prioritaire)Système de score et leaderboard(Noté 10 meilleurs scores dans un fichier (pas besoin de plus vu que l'on fait un classement type arcade)
 # TODO:(Bonus)Menu de sélection de mode de jeu
 # TODO:(Bonus)Mode survie
@@ -44,7 +43,6 @@ def check_for_lines(grid_array):
         case _:
             score = 0
     return grid_array,score
-print(check_for_lines(grid_array))
 
 
 def hitbox_affinate(hitbox):
@@ -161,6 +159,18 @@ def verif_collision(piece, position, grid, direction="Rotation"):
                     if grid[position[1] - i + len(piece)][(position[0] + j+1)] > 0 and y > 0:
                         return 1
                     j += 1
+            case "diag_left":
+                if position[1] + 1 == 23 - len(piece):
+                    for y in x:
+                        if grid[position[1]+1 - i + len(piece)][(position[0] + j - 1)] > 0 and y > 0:
+                            return 1
+                        j += 1
+            case "diag_right":
+                if position[1] + 1 == 23 - len(piece):
+                    for y in x:
+                        if grid[position[1]+1 - i + len(piece)][(position[0] + j + 1)] > 0 and y > 0:
+                            return 1
+                        j += 1
             case "Rotation":
                 print("a")
 
@@ -212,25 +222,37 @@ piece, initial_piece = next_piece()
 fpsClock = pygame.time.Clock()
 start_time = time.time()
 while True:
+    USI = pygame.key.get_pressed()
     current_time = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
     if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donner
+        if verif_collision(piece, pos, grid_array, "Down"):
+            #if verif_collision(piece,pos, grid_array,"diag_left"):
+                #pos[0]+=1
+            #elif verif_collision(piece,pos, grid_array,"diag_right"):
+                #pos[0]-=1
 
-        if verif_collision(piece, pos, grid_array, "Down") == 1:
+
             if pos[1]==0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
+                font = pygame.font.SysFont("arial", 24)
+                img = font.render('Game Over', True, (255, 255, 255))
+                window.fill((0, 0, 0))
+                window.blit(img, (63, 270))
+                pygame.display.flip()
+                time.sleep(10)
                 pygame.quit()
             else:
                 grid_array = update_array(piece, pos, grid_array)
                 piece, initial_piece = next_piece()
                 pos = copy.copy(pos_initial)
-        else:#Aucunes pièce n'est présent a la case en dessous
+        else: #Aucune pièce n'est présente a la case en dessous
             pos[1] += 1  # déplace la pièce vers le bas
         start_time = current_time
         fpsClock.tick(FPS)
-    USI = pygame.key.get_pressed()
-    if USI[pygame.K_r]:
+
+    if USI[pygame.K_UP]:
         piece, initial_piece[1] = rotation(initial_piece)
         if initial_piece[0] == [[1, 1, 1, 1]]:
             initial_piece[0] = [[1], [1], [1], [1]]

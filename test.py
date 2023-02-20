@@ -146,25 +146,13 @@ def draw_pieces(d_piece, position):
             i += 1
         j += 1
 draw_pieces(hitbox_affinate(rotation([Line, 1])[0]),[2,0])"""
-
-
-def verif_collision(piece, position, grid, direction="Rotation"):
-    i = len(piece) - 1
-    for x in piece:
-        j = 0
-        match direction:
-            case "Down":
-
-                for y in x:
-                    if position[1] + 1 == 23 - len(piece) or (
-                            grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0):
-                        return 1
-                    j += 1
-
-                i -= 1
-            case "Left":
-                for y in x:
-                    if grid[position[1] - i + len(piece)][(position[0] + j)] > 0 and y > 0:
-                        pass
-            case "Rotation":
-                print("a")
+import json
+score_list=[["ez",5000],["abc",42],["tetris",8]]
+last_score=[["test",140]]
+def send_array(score,score_list):
+    score_list.extend(last_score)
+    json_array = json.dumps(score_list)
+    f = open("score.json", "w")
+    f.write(json_array)
+    f.close
+send_array(last_score,score_list)

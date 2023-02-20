@@ -46,11 +46,11 @@ piece_list = (Line,Reverse_L, L, Square, Z_Block, T_Block, S_Block)
 # Couleurs a utiliser pour chaque pièces
 def color_selector(color_code):
     match color_code:
-        case 0:  # Blank
+        case 0:  # No piece
             color = (0, 0, 0)
         case 1:  # Line
             color = (0, 240, 240)
-        case 2:  # Reverse L
+        case 2:  # Reverse_L
             color = (0, 0, 240)
         case 3:  # L
             color = (240, 160, 0)
