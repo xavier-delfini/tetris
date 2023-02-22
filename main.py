@@ -1,10 +1,9 @@
 # Partie jeu:
-# TODO:(Optionnel)Space pour le hard drop (Faire descendre la piece instantanément
+# TODO:(Optionnel)Space pour le hard drop (Faire descendre la piece instantanément)
 # TODO:(Prioritaire 1)Faire les collision pour le déplacement en diagonales
-# TODO:(Optionnel)Mettre les paramètres dans un fichier séparer (Temps initial descente piece,intervalle d'augmentation de ce temps,couleurs des pièces,pieces en elle même)
 # Partie menu
 # TODO:(Optionnel)Affichage des prochaines pieces
-# TODO:(Non prioritaire)Système de score et leaderboard(Noté 10 meilleurs scores dans un fichier (pas besoin de plus vu que l'on fait un classement type arcade)
+# TODO:(Non prioritaire)Système de score et leaderboard
 # TODO:(Bonus)Menu de sélection de mode de jeu
 # TODO:(Bonus)Mode survie
 # TODO:(Bonus)Mode course
@@ -279,7 +278,7 @@ while True:
                     if USI[pygame.K_RETURN]:#Touche entrée
                         if len(player_name) < name_max_lenth:
                             player_name = player_name[:-1]#Suppréssion du caractère \n qui apparait a cause de la touche entrée
-                        store_score([player_name, str_score])
+                        store_score([player_name, score])
                         pygame.quit()
                     for event in pygame.event.get():
                         if event.type == pygame.KEYDOWN:#Si une touche est préssé

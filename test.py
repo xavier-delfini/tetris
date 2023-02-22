@@ -147,12 +147,43 @@ def draw_pieces(d_piece, position):
         j += 1
 draw_pieces(hitbox_affinate(rotation([Line, 1])[0]),[2,0])"""
 import json
-score_list=[["ez",5000],["abc",42],["tetris",8]]
-last_score=[["test",140]]
-def send_array(score,score_list):
-    score_list.extend(score)
-    json_array = json.dumps(score_list)
-    f = open("score.json", "w")
-    f.write(json_array)
-    f.close
-send_array(last_score,score_list)
+import pygame
+
+pygame.init()
+window = pygame.display.set_mode((270, 570))
+def fetch_scorelist():
+    f = open("score.json", "r")
+    json_array = f.read()
+    f.close()
+    #Si le fichier existe ou est remplie
+    try:
+        # Retourne un array
+        return json.loads(json_array)
+    #Si aucuns mots de passe n'est présent dans le fichier password.json
+    except json.decoder.JSONDecodeError:
+        #Création de l'array
+        return []
+def leaderboard_fetch():
+    font = pygame.font.SysFont("arial", 16)
+    score_list=fetch_scorelist()
+    score_list.sort(key=lambda score_list:score_list[1], reverse=True)
+    leaderboard = score_list[0:10]
+    i = 0
+    h_font=pygame.font.SysFont("arial", 24)
+    leader_text = h_font.render("Leaderboard", True, (255, 255, 255))
+    window.blit(leader_text, (55, 50))
+    leaderboard_display = []
+    for leaderboard_line in leaderboard:
+        lead_name = leaderboard_line[0]
+        lead_score = str(leaderboard_line[1])
+        line = lead_name+"     "+lead_score
+        leader_line_display = font.render(line, True, (255, 255, 255))
+        window.blit(leader_line_display, (40, 100+40*i))
+        leaderboard_display.extend(line)
+        i += 1
+    pygame.display.flip()
+j=0
+leaderboard_fetch()
+pygame.display.flip()
+while True:
+    j+=1
