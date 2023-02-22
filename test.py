@@ -150,7 +150,7 @@ import json
 score_list=[["ez",5000],["abc",42],["tetris",8]]
 last_score=[["test",140]]
 def send_array(score,score_list):
-    score_list.extend(last_score)
+    score_list.extend(score)
     json_array = json.dumps(score_list)
     f = open("score.json", "w")
     f.write(json_array)

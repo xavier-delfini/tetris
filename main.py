@@ -8,11 +8,14 @@
 # TODO:(Bonus)Menu de sélection de mode de jeu
 # TODO:(Bonus)Mode survie
 # TODO:(Bonus)Mode course
-import pygame
-import time
-import random
 import copy
+import json
+import pygame
+import random
+import time
+
 from parameters import *
+
 clock = pygame.time.Clock()
 n = 0
 grid_array = []
@@ -33,13 +36,13 @@ def check_for_lines(grid_array):
         i+=1
     match count:
         case 1:
-            score = 1
+            score = oneline
         case 2:
-            score = 3
+            score = twolines
         case 3:
-            score = 5
+            score = threelines
         case 4:
-            score = 8
+            score = tetris
         case _:
             score = 0
     return grid_array,score
@@ -212,6 +215,25 @@ def next_piece():
     piece = copy.copy(random_piece)
     return piece, initial_piece
 
+def fetch_scorelist():
+    f = open("score.json", "r")
+    json_array = f.read()
+    f.close
+    #Si le fichier existe ou est remplie
+    try:
+        # Retourne un array
+        return json.loads(json_array)
+    #Si aucuns mots de passe n'est présent dans le fichier password.json
+    except json.decoder.JSONDecodeError:
+        #Création de l'array
+        return []
+def store_score(score):
+    score_list = fetch_scorelist()
+    score_list.extend([score])
+    json_array = json.dumps(score_list)
+    f = open("score.json", "w")
+    f.write(json_array)
+    f.close
 
 pos = copy.copy(pos_initial)
 pygame.init()
@@ -237,13 +259,35 @@ while True:
 
             if pos[1]==0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
                 font = pygame.font.SysFont("arial", 24)
-                img = font.render('Game Over', True, (255, 255, 255))
-                window.fill((0, 0, 0))
-                window.blit(img, (63, 270))
-                pygame.display.flip()
-                time.sleep(10)
-                pygame.quit()
-            else:
+                str_score = copy.copy(str(score))
+                player_name = ""
+                while True:
+                    USI = pygame.key.get_pressed()
+                    over = font.render('Game Over', True, (255, 255, 255))
+                    displayed_score = font.render(str_score, True, (255,255,255))
+                    enter_name = font.render('Entrer votre nom', True,(255,255,255))
+                    display_name = font.render(player_name, True,(255,255,255))
+
+                    window.fill((0, 0, 0))
+
+                    window.blit(over, (63, 270))
+                    window.blit(displayed_score, (120, 295))
+                    window.blit(enter_name, (35, 320))
+                    window.blit(display_name, (35, 345))
+                    pygame.display.flip()
+                    fpsClock.tick(FPS)
+                    if USI[pygame.K_RETURN]:#Touche entrée
+                        if len(player_name) < name_max_lenth:
+                            player_name = player_name[:-1]#Suppréssion du caractère \n qui apparait a cause de la touche entrée
+                        store_score([player_name, str_score])
+                        pygame.quit()
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:#Si une touche est préssé
+                            if event.key == pygame.K_BACKSPACE:
+                                player_name = player_name[:-1]#Suppréssion du dernier caractère si la touche retour arrière est appuyé
+                            elif len(player_name) < name_max_lenth:#On souhaite un nom ne faisant pas plus de 10 caractères
+                                player_name += event.unicode
+            else:#Le jeu continue
                 grid_array = update_array(piece, pos, grid_array)
                 piece, initial_piece = next_piece()
                 pos = copy.copy(pos_initial)

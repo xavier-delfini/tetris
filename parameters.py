@@ -4,10 +4,10 @@ pos_initial = [3, 0]
 
 # Nombre d'image par seconde du jeu (une trop haute valeur peut provoquer un clignotement de la pièce
 # et une accélération de la vitesse de déplacement latéral de la piece)
-FPS = 15
+FPS = 20
 
 # Peut aussi être défini manuellement
-array_actualisation = 0.20
+array_actualisation = 0.10
 
 # Peut aussi être défini en fonction des FPS (déconseiller pour un jeu comme tetris)
 # array_actualisation=1/FPS
@@ -65,3 +65,13 @@ def color_selector(color_code):
         case _:
             exit()
     return color
+
+
+#Longueur maximal du nom du joueur
+name_max_lenth=15
+
+#Score en fonction du nombre de lignes effectué
+oneline=1
+twolines=3
+threelines=5
+tetris=8
