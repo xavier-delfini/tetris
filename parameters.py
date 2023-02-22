@@ -71,7 +71,7 @@ def color_selector(color_code):
 name_max_lenth=15
 
 #Score en fonction du nombre de lignes effectué
-oneline=1
-twolines=3
-threelines=5
-tetris=8
+oneline_points = 1
+twolines_points = 3
+threelines_points = 5
+tetris_points = 8

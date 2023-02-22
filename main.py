@@ -36,13 +36,13 @@ def check_for_lines(grid_array):
         i+=1
     match count:
         case 1:
-            score = oneline
+            score = oneline_points
         case 2:
-            score = twolines
+            score = twolines_points
         case 3:
-            score = threelines
+            score = threelines_points
         case 4:
-            score = tetris
+            score = tetris_points
         case _:
             score = 0
     return grid_array,score
@@ -218,7 +218,7 @@ def next_piece():
 def fetch_scorelist():
     f = open("score.json", "r")
     json_array = f.read()
-    f.close
+    f.close()
     #Si le fichier existe ou est remplie
     try:
         # Retourne un array
@@ -233,7 +233,7 @@ def store_score(score):
     json_array = json.dumps(score_list)
     f = open("score.json", "w")
     f.write(json_array)
-    f.close
+    f.close()
 
 pos = copy.copy(pos_initial)
 pygame.init()
@@ -273,7 +273,7 @@ while True:
                     window.blit(over, (63, 270))
                     window.blit(displayed_score, (120, 295))
                     window.blit(enter_name, (35, 320))
-                    window.blit(display_name, (35, 345))
+                    window.blit(display_name, (40, 345))
                     pygame.display.flip()
                     fpsClock.tick(FPS)
                     if USI[pygame.K_RETURN]:#Touche entrée
