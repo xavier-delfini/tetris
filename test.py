@@ -146,6 +146,8 @@ def draw_pieces(d_piece, position):
             i += 1
         j += 1
 draw_pieces(hitbox_affinate(rotation([Line, 1])[0]),[2,0])"""
+#Leaderboard (Pas encore implémenter)
+"""
 import json
 import pygame
 
@@ -182,8 +184,25 @@ def leaderboard_fetch():
         leaderboard_display.extend(line)
         i += 1
     pygame.display.flip()
-j=0
+j = 0
 leaderboard_fetch()
 pygame.display.flip()
 while True:
-    j+=1
+    j+=1"""
+import pygame
+def grille():#Permet l'affichage de la grille
+    i=10
+    while i <561:
+        if i<261:
+            j=i
+        pygame.draw.line(window, (255, 255, 255), (10, i), (260, i))
+        pygame.draw.line(window, (255, 255, 255), (j, 10), (j, 560))
+        i+=25
+
+pygame.init()
+window = pygame.display.set_mode((500, 570))
+grille()
+while True:
+    pygame.display.flip()
+    for event in pygame.event.get():
+        grille()
