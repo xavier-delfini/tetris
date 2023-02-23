@@ -332,7 +332,7 @@ def tetris():
 pygame.init()
 screen = pygame.display.set_mode((400, 300))
 BLACK = (0, 0, 0)
-background_image = pygame.image.load("tetris.png").convert()
+background_image = pygame.image.load("oui.jpg").convert()
 
 font = pygame.font.Font(None, 50)
 
