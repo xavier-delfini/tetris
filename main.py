@@ -1,12 +1,3 @@
-# Partie jeu:
-# TODO:(Optionnel)Space pour le hard drop (Faire descendre la piece instantanément)
-# TODO:(Prioritaire 1)Faire les collision pour le déplacement en diagonales
-# Partie menu
-# TODO:(Optionnel)Affichage des prochaines pieces
-# TODO:(Non prioritaire)Système de score et leaderboard
-# TODO:(Bonus)Menu de sélection de mode de jeu
-# TODO:(Bonus)Mode survie
-# TODO:(Bonus)Mode course
 import copy
 import json
 import pygame
@@ -272,7 +263,7 @@ def tetris():
 
     pos = copy.copy(pos_initial)
     pygame.init()
-    window = pygame.display.set_mode((500, 570))
+    window = pygame.display.set_mode((370, 570))
     grille()
     n = 0
     grid_array = []
@@ -331,8 +322,9 @@ def tetris():
         score = count + score
         window.fill((0, 0, 0))
         grille()
+        font = pygame.font.SysFont("Arial", 20)
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-        window.blit(score_text, (400, 500))
+        window.blit(score_text, (280, 500))
         draw_array()
         draw_pieces(piece, pos)
         fpsClock.tick(FPS)
