@@ -2,11 +2,11 @@
 # Position initial des pièces
 pos_initial = [3, 0]
 
-# Nombre d'image par seconde du jeu (une trop haute valeur peut provoquer un clignotement de la pièce
+# Nombre d'image par seconde du jeu(Défaut 15) (une trop haute valeur peut provoquer un clignotement de la pièce
 # et une accélération de la vitesse de déplacement latéral de la piece)
 FPS = 15
 
-# Peut aussi être défini manuellement
+# Peut aussi être défini manuellement(Défaut 0.20)
 array_actualisation = 0.20
 
 # Peut aussi être défini en fonction des FPS (déconseiller pour un jeu comme tetris)

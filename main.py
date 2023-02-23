@@ -8,6 +8,7 @@ from parameters import *
 clock = pygame.time.Clock()
 def tetris():
     def check_for_lines(grid_array):
+        #Vérifie si une ligne n'est pas complete et si c'est le cas l'enlève et en rajoute une nouvelle a la position 0
         def is_complete(line):
             return all(x > 0 for x in line)
         count=0
@@ -33,6 +34,7 @@ def tetris():
 
 
     def hitbox_affinate(hitbox):
+        #Enlève la lignes de 0 de certaines pièces
         m = 0
         match len(hitbox):
             case 1: pass
@@ -59,6 +61,7 @@ def tetris():
 
 
     def draw_array():
+        #Affiche les pièces déjà posées
         m = 0
         for l in grid_array:
             n = 0
@@ -70,12 +73,14 @@ def tetris():
 
 
     def draw_bloc(color, position):
+        #Affiche le bloc a la position demandé
         width, height = calc_position_grid(position)
         if color != (0, 0, 0):
             pygame.draw.rect(window, color, ((height, width), (22, 22)), 0)
 
 
     def draw_pieces(d_piece, position):
+        #Affiche la pièce actuellement utilisé (n'est pas encore inclu dans l'array car non posé)
         d_piece = hitbox_affinate(d_piece)
         j = position[1]
         i = position[0]
@@ -99,12 +104,14 @@ def tetris():
 
 
     def calc_position_grid(position):
+        #Caclul la position d'un carré sur la grille et retourne ces coordonnée par rapport a la position dans l'array
         calc_width = 12 + (25 * position[0])
         calc_height = 12 + (25 * position[1])
         return calc_width, calc_height
 
 
     def update_array(piece, pos, grid):
+        #Permet de mettre la pièces posé dans l'array
         i = 0
         for x in piece:
             j = 0
@@ -116,7 +123,8 @@ def tetris():
         return grid
 
 
-    def grille():#Permet l'affichage de la grille
+    def grille():
+        #Permet l'affichage de la grille
         i=10
         while i <561:
             if i<261:
@@ -127,6 +135,7 @@ def tetris():
 
 
     def verif_collision(piece, position, grid, direction="Rotation"):
+        #Vérification pour vérifier si la pièces peut aller dans la direction que l'utilisateur demande
         i = len(piece) - 1
         for x in piece:
             j = 0
@@ -202,25 +211,14 @@ def tetris():
 
         return piece, rotation_count
 
-    def next_piece():#Récupération de la piéces suivante lorsque la précedente est posé
+    def next_piece():
+        #Récupération de la piéces suivante lorsque la précedente est posé
         random_piece = random.choice(piece_list)
         initial_piece = [random_piece, 1]
         piece = copy.copy(random_piece)
         return piece, initial_piece
-
-    def fetch_scorelist():#Récupération liste des scores
-        f = open("score.json", "r")
-        json_array = f.read()
-        f.close()
-        #Si le fichier existe ou est remplie
-        try:
-            # Retourne un array
-            return json.loads(json_array)
-        #Si aucuns mots de passe n'est présent dans le fichier password.json
-        except json.decoder.JSONDecodeError:
-            #Création de l'array
-            return []
-    def store_score(score):#écriture au-dessus de la liste de score existante pour rajouter notre nouveau score
+    def store_score(score):
+        #écriture par-dessus la liste de score existante pour rajouter notre nouveau score
         score_list = fetch_scorelist()
         score_list.extend([score])
         json_array = json.dumps(score_list)
@@ -228,7 +226,8 @@ def tetris():
         f.write(json_array)
         f.close()
 
-    def game_over(final_score):#Permet l'affichage de l'écran de game_over, l'entrée du nom du joueur, et appel la fonction store_score avec la touche entrée
+    def game_over(final_score):
+        #Permet l'affichage de l'écran de game_over, l'entrée du nom du joueur, et appel la fonction store_score avec la touche entrée
         font = pygame.font.SysFont("arial", 24)
         str_score = copy.copy(str(final_score))
         player_name = ""
@@ -241,10 +240,10 @@ def tetris():
 
             window.fill((0, 0, 0))
 
-            window.blit(over, (63, 270))
-            window.blit(displayed_score, (120, 295))
-            window.blit(enter_name, (35, 320))
-            window.blit(display_name, (40, 345))
+            window.blit(over, (120, 270))
+            window.blit(displayed_score, (175, 295))
+            window.blit(enter_name, (90, 320))
+            window.blit(display_name, (90, 345))
 
             pygame.display.flip()
             fpsClock.tick(FPS)
@@ -252,14 +251,13 @@ def tetris():
                 if len(player_name) < name_max_lenth:
                     player_name = player_name[:-1]  # Suppréssion du caractère \n qui apparait à cause de la touche entrée
                 store_score([player_name, score])
-                pygame.quit()
+                return
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:  # Si une touche est préssé
                     if event.key == pygame.K_BACKSPACE:
                         player_name = player_name[:-1]  # Suppréssion du dernier caractère si la touche retour arrière est préssée
                     elif len(player_name) < name_max_lenth:  # On souhaite un nom ne faisant pas plus de caractèresque le paramètre name_max_lenth(Situé dans le fichier parameters)
                         player_name += event.unicode
-
 
     pos = copy.copy(pos_initial)
     pygame.init()
@@ -276,22 +274,17 @@ def tetris():
     fpsClock = pygame.time.Clock()
     start_time = time.time()
     while True:
-        font = pygame.font.SysFont("Arial", 20)
         USI = pygame.key.get_pressed()
         current_time = time.time()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-        if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donner
+            if event.type == pygame.QUIT:#Retour au menu si la croix de la fênetre est préssé
+                return
+        if current_time - start_time > array_actualisation:  # déplace la pièce selon le temps donné
             if verif_collision(piece, pos, grid_array, "Down"):
-                #if verif_collision(piece,pos, grid_array,"diag_left"):
-                    #pos[0]+=1
-                #elif verif_collision(piece,pos, grid_array,"diag_right"):
-                    #pos[0]-=1
 
-
-                if pos[1]==0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
+                if pos[1] == 0:#Condition fin de partie (les pieces posées ont atteint le haut de la grille
                     game_over(score)
+                    return
                 else:#Le jeu continue
                     grid_array = update_array(piece, pos, grid_array)
                     piece, initial_piece = next_piece()
@@ -328,44 +321,112 @@ def tetris():
         draw_array()
         draw_pieces(piece, pos)
         fpsClock.tick(FPS)
+def fetch_scorelist():
+    #Récupération de la liste des scores
+    f = open("score.json", "r")
+    json_array = f.read()
+    f.close()
+    #Si le fichier existe ou est remplie
+    try:
+        # Retourne un array
+        return json.loads(json_array)
+    #Si aucuns mots de passe n'est présent dans le fichier password.json
+    except json.decoder.JSONDecodeError:
+        #Création de l'array
+        return []
+def leaderboard_fetch():
+    #Affichage des meilleurs scores
+    screen = pygame.display.set_mode((400, 650))
+    while True:
+        screen.fill((0, 0, 0))
+        font = pygame.font.SysFont("arial", 16)
+        score_list = fetch_scorelist()
+        score_list.sort(key=lambda score_list: score_list[1], reverse=True)
+        leaderboard = score_list[0:10]
+        i = 0
+        h_font = pygame.font.SysFont("arial", 24)
+        leader_text = h_font.render("Leaderboard", True, (255, 255, 255))
+        screen.blit(leader_text, (140, 50))
+        leaderboard_display = []
+
+        for leaderboard_line in leaderboard:
+            lead_name = leaderboard_line[0]
+            lead_score = str(leaderboard_line[1])
+            line = lead_name + "     " + lead_score
+            leader_line_display = font.render(line, True, (255, 255, 255))
+            screen.blit(leader_line_display, (40, 120 + 40 * i))
+            leaderboard_display.extend(line)
+            i += 1
+
+        button_back = pygame.Rect(150, 150, 100, 50)
+        button_back.centery = 600
+        button_text = font.render("Retour", True, (255, 255, 255))
+        button_text_pos = button_text.get_rect()
+        button_text_pos.centerx = button_back.centerx
+        button_text_pos.centery = button_back.centery
+        pygame.draw.rect(screen, (255, 0, 0), button_back)
+        screen.blit(button_text, button_text_pos)
+
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if button_back.collidepoint(mouse_pos):
+                    return
 
 pygame.init()
-screen = pygame.display.set_mode((400, 300))
-BLACK = (0, 0, 0)
-background_image = pygame.image.load("oui.jpg").convert()
-
-font = pygame.font.Font(None, 50)
-
-text = font.render("Tetris", True, (255, 0, 0))
-
-text_pos = text.get_rect()
-text_pos.centerx = screen.get_rect().centerx
-text_pos.centery = 50
-
-button = pygame.Rect(150, 150, 100, 50)
-button_text = font.render("Start", True, (255, 255, 255))
-button_text_pos = button_text.get_rect()
-button_text_pos.centerx = button.centerx
-button_text_pos.centery = button.centery
 
 done = False
 
 while not done:
+    screen = pygame.display.set_mode((400, 300))
+    pygame.display.set_caption('Tetris')
+    BLACK = (0, 0, 0)
+    background_image = pygame.image.load("background_image.jpg").convert()
+
+    font = pygame.font.Font(None, 50)
+
+    text = font.render("Tetris", True, (255, 0, 0))
+
+    text_pos_play = text.get_rect()
+    text_pos_play.centerx = screen.get_rect().centerx
+    text_pos_play.centery = 20
+
+    button_lead = pygame.Rect(150, 150, 250, 50)
+    button_text_lead = font.render("Leaderboard", True, (255, 255, 255))
+    button_lead.centerx = 200
+    button_lead.centery = 180
+    button_text_leadpos = button_text_lead.get_rect()
+    button_text_leadpos.centerx = button_lead.centerx
+    button_text_leadpos.centery = button_lead.centery
+
+    button_play = pygame.Rect(150, 150, 100, 50)
+    button_play.centery = 100
+    button_text = font.render("Start", True, (255, 255, 255))
+    button_text_pos = button_text.get_rect()
+    button_text_pos.centerx = button_play.centerx
+    button_text_pos.centery = button_play.centery
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos
-            if button.collidepoint(mouse_pos):
+            if button_lead.collidepoint(mouse_pos):
+                leaderboard_fetch()
+            if button_play.collidepoint(mouse_pos):
                 tetris()
 
     screen.fill((255, 255, 255))
     screen.blit(background_image, [0, 0])
 
-    screen.blit(text, text_pos)
+    screen.blit(text, text_pos_play)
 
-    pygame.draw.rect(screen, (255, 0, 0), button)
+    pygame.draw.rect(screen, (255, 0, 0), button_play)
     screen.blit(button_text, button_text_pos)
+    pygame.draw.rect(screen, (255, 0, 0), button_lead)
+    screen.blit(button_text_lead,button_text_leadpos)
 
     pygame.display.flip()
 
